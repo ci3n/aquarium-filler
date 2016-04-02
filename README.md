@@ -2,4 +2,6 @@ Aquarium Filler
 ==============
 
 - **AquariumFiller** — logic
-- **AqauriumViewer** — JOGL output
+- **CubeRenderer** — JOGL output
+- **MainFrame, SettingsPanel, AquariumGLCanvas** — GUI components
+

@@ -20,11 +20,13 @@ public class AquariumGLCanvas extends GLCanvas {
         this.addMouseWheelListener(cubeRenderer);
         this.setSize(600, 400);
         this.requestFocusInWindow();
-
         fpsAnimator = new FPSAnimator(this, 60, true);
         fpsAnimator.start();
     }
 
+    /**
+     * Sets given int array as aquarium
+     */
     public void setAquarium(final int[] aquarium) {
         aquariumFiller.setAquarium(aquarium);
         cubeRenderer.setData(aquarium, aquariumFiller.getWater());

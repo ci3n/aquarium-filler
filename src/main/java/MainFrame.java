@@ -10,6 +10,9 @@ public class MainFrame extends JFrame {
         super("Aquarium Filler");
     }
 
+    /**
+     * Initialises GUI components
+     */
     public void init() {
         final JPanel mainPanel = new JPanel();
         final AquariumGLCanvas aquariumGLCanvas = new AquariumGLCanvas();
@@ -24,12 +27,9 @@ public class MainFrame extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        changeLookAndFeel();
-    }
 
-    private void changeLookAndFeel() {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // tries to make it nicer
         } catch (ClassNotFoundException | InstantiationException
                 | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();

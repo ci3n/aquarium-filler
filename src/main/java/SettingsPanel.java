@@ -1,15 +1,10 @@
-import com.jogamp.opengl.awt.GLCanvas;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.BorderUIResource;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by ci3n on 04/1/16.
@@ -34,7 +29,13 @@ public class SettingsPanel extends JPanel {
         aquariumTextField.setDocument(numbersOnlyDocument);
         aquariumTextField.setText("3 1 1 1 1 3");
 
-        setActionListeners();
+        resetButton.addActionListener(e -> {
+                    aquariumTextField.setText("3 1 1 1 1 3");
+                    glCanvas.setAquarium(parseAquarium());
+                }
+        );
+
+        fillButton.addActionListener(e -> glCanvas.setAquarium(parseAquarium()));
 
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.setBorder(new TitledBorder("Settings"));
@@ -45,18 +46,14 @@ public class SettingsPanel extends JPanel {
         this.add(fillButton);
     }
 
-    private void setActionListeners() {
-        resetButton.addActionListener(e -> {
-                    aquariumTextField.setText("3 1 1 1 1 3");
-                    glCanvas.setAquarium(parseAquarium());
-                }
-        );
-
-        fillButton.addActionListener(e -> glCanvas.setAquarium(parseAquarium()));
-    }
-
+    /**
+     * Splites string (by whitespaces) to int array.
+     *
+     * @return int array (empty one if there's nothing to be parsed).
+     */
     private int[] parseAquarium() {
         String[] tmp = aquariumTextField.getText().split("\\s++");
+        if (tmp.length == 0 || tmp[0].equals("")) return new int[]{}; // avoids NumberFormatException
         aquarium = new int[tmp.length];
         for (int i = 0; i < tmp.length; i++) {
             aquarium[i] = Integer.parseInt(tmp[i]);
@@ -64,6 +61,9 @@ public class SettingsPanel extends JPanel {
         return aquarium;
     }
 
+    /**
+     * Allows only digits and whitespaces in string to make parsing error-free.
+     */
     private class IntDocumentFilter extends DocumentFilter {
         private final static String REPLACE_PATTERN = "[^\\d\\s]++";
 
