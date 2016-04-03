@@ -15,15 +15,16 @@ public class MainFrame extends JFrame {
      */
     public void init() {
         final JPanel mainPanel = new JPanel();
-        final AquariumGLCanvas aquariumGLCanvas = new AquariumGLCanvas();
-        final SettingsPanel settingsPanel = new SettingsPanel(aquariumGLCanvas);
+        final AquariumGLPanel aquariumGLPanel = new AquariumGLPanel();
+        final SettingsPanel settingsPanel = new SettingsPanel(aquariumGLPanel);
 
         this.setContentPane(mainPanel);
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(aquariumGLCanvas, BorderLayout.CENTER);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
         mainPanel.add(settingsPanel, BorderLayout.NORTH);
-
+        mainPanel.add(aquariumGLPanel, BorderLayout.CENTER);
         this.setSize(getPreferredSize());
+        this.setMinimumSize(getMinimumSize());
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
         this.setLocationRelativeTo(null);

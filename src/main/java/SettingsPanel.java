@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -10,14 +12,14 @@ import java.awt.*;
  * Created by ci3n on 04/1/16.
  */
 public class SettingsPanel extends JPanel {
-    private AquariumGLCanvas glCanvas;
+    private AquariumGLPanel glCanvas;
     private JButton resetButton;
     private JButton fillButton;
     private JTextField aquariumTextField;
 
     private int[] aquarium;
 
-    public SettingsPanel(final AquariumGLCanvas glCanvas) {
+    public SettingsPanel(final AquariumGLPanel glCanvas) {
         this.glCanvas = glCanvas;
 
         resetButton = new JButton("Reset");
@@ -28,6 +30,7 @@ public class SettingsPanel extends JPanel {
         numbersOnlyDocument.setDocumentFilter(new IntDocumentFilter());
         aquariumTextField.setDocument(numbersOnlyDocument);
         aquariumTextField.setText("3 1 1 1 1 3");
+        aquariumTextField.setCaretPosition(aquariumTextField.getText().length());
 
         resetButton.addActionListener(e -> {
                     aquariumTextField.setText("3 1 1 1 1 3");
@@ -38,12 +41,14 @@ public class SettingsPanel extends JPanel {
         fillButton.addActionListener(e -> glCanvas.setAquarium(parseAquarium()));
 
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        this.setBorder(new TitledBorder("Settings"));
+        this.add(new JLabel("Aquarium layout:"));
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(aquariumTextField);
         this.add(Box.createRigidArea(new Dimension(10, 0)));
-        this.add(resetButton);
-        this.add(Box.createRigidArea(new Dimension(10, 0)));
         this.add(fillButton);
+        this.add(Box.createRigidArea(new Dimension(10, 0)));
+        this.add(resetButton);
+        this.setBorder(new EmptyBorder(0, 2, 8, 0));
     }
 
     /**

@@ -70,6 +70,14 @@ public class AquariumFillerTest {
     }
 
     @Test
+    public void testGetWater4() throws Exception {
+        testGetWaterHelper(new int[]{3, 2, 1, 1, 4, 8, 6, 4, 7, 8, 0, 8, 7, 6, 5, 7, 3, 8, 7,
+                        5, 4, 6, 7, 8, 9, 0, 0, 0, 9, 7, 5, 4, 7, 8, 9, 4, 6, 7, 8, 4, 3, 1, 1, 4, 6},
+                new int[]{0, 1, 2, 2, 0, 0, 2, 4, 1, 0, 0, 0, 1, 2, 3, 1, 5, 0, 1,
+                        3, 4, 2, 1, 0, 0, 0, 0, 0, 0, 2, 4, 5, 2, 1, 0, 4, 2, 1, 0, 2, 3, 5, 5, 2, 0});
+    }
+
+    @Test
     public void testGetWaterZeroes() throws Exception {
         testGetWaterHelper(new int[]{0, 0, 0, 0}, new int[]{0, 0, 0, 0});
     }
@@ -86,10 +94,10 @@ public class AquariumFillerTest {
 
         System.err.println("PRIVATE METHOD");
         aquariumFiller.setAquarium(testArray);
-        List<Integer> testResult = (List<Integer>)method.invoke(aquariumFiller, testArray);
-        System.err.println("Test subject: "+Arrays.toString(testArray));
-        System.err.println("Expected: "+ expected);
-        System.err.println("Result:   "+ testResult);
+        List<Integer> testResult = (List<Integer>) method.invoke(aquariumFiller, testArray);
+        System.err.println("Test subject: " + Arrays.toString(testArray));
+        System.err.println("Expected: " + expected);
+        System.err.println("Result:   " + testResult);
         assertEquals(expected.size(), testResult.size());
 
         Iterator<Integer> i1 = expected.iterator();
@@ -101,17 +109,17 @@ public class AquariumFillerTest {
 
     @Test
     public void testPrivateGetLocalMaximums1() throws Exception {
-        testPrivateGetLocalMaximumsHelper(new int[]{2,1,2,3,4,5,3,2,1,5}, Arrays.asList(0,5,9));
+        testPrivateGetLocalMaximumsHelper(new int[]{2, 1, 2, 3, 4, 5, 3, 2, 1, 5}, Arrays.asList(0, 5, 9));
     }
 
     @Test
     public void testPrivateGetLocalMaximumsSame() throws Exception {
-        testPrivateGetLocalMaximumsHelper(new int[]{2,2,2,2}, Arrays.asList(0));
+        testPrivateGetLocalMaximumsHelper(new int[]{2, 2, 2, 2}, Arrays.asList(0));
     }
 
     @Test
     public void testPrivateGetLocalMaximumsSame2() throws Exception {
-        testPrivateGetLocalMaximumsHelper(new int[]{1,1,2,2,3,3,4,4,3,3}, Arrays.asList(6));
+        testPrivateGetLocalMaximumsHelper(new int[]{1, 1, 2, 2, 3, 3, 4, 4, 3, 3}, Arrays.asList(6));
     }
 
     public void testPrivateGetSeparateAquariumsHelper(final int[] testArray, int[][] expected) throws Exception {
@@ -120,8 +128,8 @@ public class AquariumFillerTest {
 
         System.err.println("PRIVATE METHOD");
         aquariumFiller.setAquarium(testArray);
-        int[][] testResult = (int[][])method.invoke(aquariumFiller);
-        System.err.println("Test subject: "+Arrays.toString(testArray));
+        int[][] testResult = (int[][]) method.invoke(aquariumFiller);
+        System.err.println("Test subject: " + Arrays.toString(testArray));
         System.err.print("Expected: ");
         for (int i = 0; i < expected.length; i++) {
             System.err.print(Arrays.toString(expected[i]));
@@ -135,23 +143,23 @@ public class AquariumFillerTest {
         assertEquals(expected.length, testResult.length);
 
         for (int i = 0; i < expected.length; i++) {
-            assertArrayEquals(expected[i],testResult[i]);
+            assertArrayEquals(expected[i], testResult[i]);
         }
     }
 
     @Test
     public void testPrivateGetSeparateAquariumsNoZeroes() throws Exception {
-        testPrivateGetSeparateAquariumsHelper(new int[]{1,2,3,4},new int[][]{{1,2,3,4}});
+        testPrivateGetSeparateAquariumsHelper(new int[]{1, 2, 3, 4}, new int[][]{{1, 2, 3, 4}});
     }
 
     @Test
     public void testPrivateGetSeparateAquariumsAllZeroes() throws Exception {
-        testPrivateGetSeparateAquariumsHelper(new int[]{0,0,0,0},new int[][]{{},{},{},{},{}});
+        testPrivateGetSeparateAquariumsHelper(new int[]{0, 0, 0, 0}, new int[][]{{}, {}, {}, {}, {}});
     }
 
     @Test
     public void testPrivateGetSeparateAquariumsSeveralZeroes() throws Exception {
-        testPrivateGetSeparateAquariumsHelper(new int[]{0,1,0,2,0,0,0,3,4,5,0},new int[][]{{},{1},{2},{},{},{3,4,5},{}});
+        testPrivateGetSeparateAquariumsHelper(new int[]{0, 1, 0, 2, 0, 0, 0, 3, 4, 5, 0}, new int[][]{{}, {1}, {2}, {}, {}, {3, 4, 5}, {}});
     }
 
 }

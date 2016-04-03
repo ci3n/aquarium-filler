@@ -48,10 +48,11 @@ public class AquariumFiller {
         int[][] aquariums = getSeparateAquariums();
         int pos = 0;
         for (int i = 0; i < aquariums.length; i++) {
+//            System.err.println("Aquarium: "+Arrays.toString(aquariums[i]));
             if (aquariums[i].length != 0) {
-                int[] tmp = getWaterForSingleAquarium(aquariums[i], i);
-                System.arraycopy(tmp, 0, water, pos, tmp.length);
-                pos += tmp.length;
+                int[] tmp = getWaterForSingleAquarium(aquariums[i], pos);
+                System.arraycopy(tmp, 0, water, pos, aquariums[i].length);
+                pos += aquariums[i].length;
             }
             pos++;
         }
@@ -77,6 +78,7 @@ public class AquariumFiller {
 
     /**
      * Splits initial aquariums into parts without zeroes
+     *
      * @return array of separate aquariums
      */
     private int[][] getSeparateAquariums() {
@@ -96,15 +98,19 @@ public class AquariumFiller {
 
     /**
      * Reverses a section and tries to split it then reverses result back again
+     *
      * @param section
-     * @param aquariumIndex index of aquarium to which section belongs
+     * @param aquariumStart start position of current aquarium
+     * in main aquarium to which section belongs
      * @return list of new sections
      */
-    private List<Section> splitLastSection(final Section section, final int aquariumIndex) {
+    private List<Section> splitLastSection(final Section section, final int aquariumStart) {
         int[] tmp = new int[section.end - section.start + 1];
+//        System.err.println("Last section: "+ section);
         for (int i = 0; i < tmp.length; i++) {
-            tmp[i] = aquarium[section.end - i + aquariumIndex];
+            tmp[i] = aquarium[section.end - i + aquariumStart];
         }
+//        System.err.println(aquariumStart + " " + Arrays.toString(tmp));
         List<Section> tmpList = calculateSections(tmp);
         for (Section newSection : tmpList) {
             int i = newSection.start;
@@ -118,6 +124,7 @@ public class AquariumFiller {
      * Calculates sections in current aquarium
      * New section starts when next column is higher than (or equals to)
      * the highest column in current section
+     *
      * @param aquarium aquarium to be divided in sections
      * @return list of sections
      */
@@ -164,6 +171,7 @@ public class AquariumFiller {
      * Finds local maximums in an array
      * Local maximum is an element which is bigger than
      * all it's non-equal neighbours
+     *
      * @param aquarium initial array
      * @return list of maximums' indexes
      */

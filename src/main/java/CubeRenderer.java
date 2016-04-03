@@ -18,17 +18,18 @@ import java.io.InputStream;
 public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionListener, MouseWheelListener, MouseListener {
     private GLU glu = new GLU();
     private GLUT glut = new GLUT();
-
+    // Scene positions
     private float xRotation = 0f;
-    private float yRotation = -30f;
+    private float yRotation = 30f;
     private float deltaX = 0f;
     private float deltaY = -4f;
     private float deltaZ = -20f;
-
-    private final float sensitivity = 0.001f;
-    private final float moveIncrement = 1.8f;
-    private float oldMouseX;
+    // Movement
     private float oldMouseY;
+    private float oldMouseX;
+    // Movement constants
+    private final static float sensitivity = 0.001f;
+    private final static float moveIncrement = 1.8f;
     // Display lists
     private int cubeDisplayList;
     // Textures
@@ -110,18 +111,19 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
         gl.glRotatef(xRotation, 1f, 0f, 0f);
 
         float[] lightPos = {-200, -300, -200, 1};        // light position
-        float[] noAmbient = {0.2f, 0.2f, 0.2f, 1f};     // low ambient light
+        // float[] noAmbient = {0.2f, 0.2f, 0.2f, 1f};     // low ambient light
         float[] diffuse = {1f, 1f, 1f, 1f};        // full diffuse colour
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, noAmbient, 0);
+        // gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, noAmbient, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
 
-        //TODO: fix boundaries
-        boolean top = xRotation < 0;
-        boolean left = yRotation > 0;
+        // Define relative position to make blended rendering a little bit more okay
+        boolean tiltedLeft = yRotation <= 180;
+        boolean facedBack = yRotation > 90 && yRotation <= 270;
+        boolean tiltedAway = xRotation >= 180 && !facedBack || xRotation < 180 && facedBack;
 
         gl.glTranslatef(-2f * (float) (cubes.length / 2), 0f, 0f);
 
@@ -141,7 +143,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
         if (waterTexture != 1) {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, waterTexture);
         }
-        renderWater(gl, top, left);
+        renderWater(gl, tiltedAway, tiltedLeft);
     }
 
     /**
@@ -177,21 +179,21 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
      * when (left or bottom) part is closer to viewer.
      * May cause incorrect rendering, but is probably faster than manual z-sorting.
      *
-     * @param top  -- is tilted towards
-     * @param left -- is tilted to the side
+     * @param tiltedAway
+     * @param tiltedLeft -- is tilted to the side
      */
-    private void renderWater(final GL2 gl, boolean top, boolean left) {
+    private void renderWater(final GL2 gl, boolean tiltedAway, boolean tiltedLeft) {
         gl.glColor4f(0f, 0f, 0.7f, 0.5f);
         float xShift = 2f;
-        float yShift = top ? -2f : 2f;
-        if (left) {
+        float yShift = tiltedAway ? -2f : 2f;
+        if (tiltedLeft) {
             gl.glTranslatef(2f * (float) cubes.length - 2f, 0f, 0f); // start rendering from the right side
             xShift = -2f; // move to the left
         }
         for (int column = 0; column < cubes.length; column++) {
-            int columnIndex = left ? cubes.length - column - 1 : column;
+            int columnIndex = tiltedLeft ? cubes.length - column - 1 : column;
             gl.glTranslatef(0f, (float) cubes[columnIndex] * 2f, 0f);
-            if (top) {
+            if (tiltedAway) {
                 gl.glTranslatef(0f, (float) water[columnIndex] * 2f + 2f, 0f); // start rendering from top
             }
             for (int waterCube = 0; waterCube < water[columnIndex]; waterCube++) {
@@ -199,7 +201,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
                 gl.glCallList(cubeDisplayList);
             }
             // return to ground level and move to the next column
-            if (top) {
+            if (tiltedAway) {
                 gl.glTranslatef(xShift, -(float) cubes[columnIndex] * 2f - 2f, 0f);
             } else {
                 gl.glTranslatef(xShift, -(float) (cubes[columnIndex] + water[columnIndex]) * 2f, 0f);
@@ -242,7 +244,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
                 {1, 1, -1}, {1, -1, -1}, {-1, -1, -1}, {-1, 1, -1}
         };
         int[][] cubeSides = new int[][]{
-                {3, 2, 5, 4}, {4, 5, 6, 7}, {7, 6, 1, 0}, {1, 6, 5, 2}, {0, 3, 4, 7}, {0, 1, 2, 3}
+                {0, 3, 4, 7}, {3, 2, 5, 4}, {4, 5, 6, 7}, {7, 6, 1, 0}, {1, 6, 5, 2}, {0, 1, 2, 3}
         };
         int[][] textureVertexes = new int[][]{
                 {-1, 1}, {1, 1}, {1, -1}, {-1, -1}
@@ -256,21 +258,25 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
                 gl.glTexCoord2f(textureVertexes[j][0], textureVertexes[j][1]);
             }
         }
-        glut.glutWireCube(2.01f);
         gl.glEnd();
+        glut.glutWireCube(2.01f);
         gl.glEndList();
     }
 
     /**
-     * Rotates camera
+     * Rotates camera by {@value #moveIncrement} if movement increment is greater then {@value #sensitivity}
      */
     private void rotateCamera(final float x, final float y) {
         xRotation += x >= sensitivity ? -moveIncrement : (x <= -sensitivity) ? +moveIncrement : 0;
+        if (xRotation > 360) xRotation -= 360;
+        if (xRotation < 0) xRotation += 360;
         yRotation += y >= sensitivity ? moveIncrement : (y <= -sensitivity) ? -moveIncrement : 0;
+        if (yRotation > 360) yRotation -= 360;
+        if (yRotation < 0) yRotation += 360;
     }
 
     /**
-     * Moves camera back and forth
+     * Moves camera back and forth by by {@value #moveIncrement}
      */
     private void moveCamera(final float mouseRotation) {
         deltaZ -= mouseRotation * moveIncrement;
@@ -279,7 +285,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
     }
 
     /**
-     * Moves camera parallel to the screen
+     * Moves camera parallel to the screen by by {@value #moveIncrement}*3
      */
     private void moveCamera(final float dX, final float dY) {
         deltaX -= dX * moveIncrement * 3;
