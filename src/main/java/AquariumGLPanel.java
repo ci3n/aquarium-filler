@@ -1,9 +1,7 @@
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
-import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
-import javafx.scene.layout.Border;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,15 +14,19 @@ public class AquariumGLPanel extends GLJPanel {
     private CubeRenderer cubeRenderer;
     private FPSAnimator fpsAnimator;
 
-    public AquariumGLPanel() {
+    public AquariumGLPanel(final boolean animated) {
         super(new GLCapabilities(GLProfile.get("GL2")));
-        cubeRenderer = new CubeRenderer(new int[]{3, 1, 1, 1, 1, 3}, new int[]{0, 2, 2, 2, 2, 0});
+        if (animated) {
+            cubeRenderer = new DelayedCubeRenderer(new int[]{3, 1, 1, 1, 1, 3}, new int[]{0, 2, 2, 2, 2, 0});
+        } else {
+            cubeRenderer = new CubeRenderer(new int[]{3, 1, 1, 1, 1, 3}, new int[]{0, 2, 2, 2, 2, 0});
+        }
         this.addGLEventListener(cubeRenderer);
         this.addKeyListener(cubeRenderer);
         this.addMouseMotionListener(cubeRenderer);
         this.addMouseWheelListener(cubeRenderer);
-        this.setMinimumSize(new Dimension(300,300));
-        this.setPreferredSize(new Dimension(600,400));
+        this.setMinimumSize(new Dimension(300, 300));
+        this.setPreferredSize(new Dimension(600, 400));
         this.setBorder(BorderFactory.createEtchedBorder(0));
         fpsAnimator = new FPSAnimator(this, 60, true);
         fpsAnimator.start();
