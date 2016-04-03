@@ -1,47 +1,16 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+# Created by https://www.gitignore.io
 
-# Folder config file
-Desktop.ini
+### Intellij ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+*.iml
 
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
+## Directory-based project format:
+.idea/
 
-# Windows shortcuts
-*.lnk
+### Maven ###
+log/
+target/
 
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+### Java ###
+*.class
