@@ -1,4 +1,3 @@
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -14,6 +13,10 @@ import java.io.InputStream;
 
 /**
  * Created by ci3n on 04/1/16.
+ */
+
+/**
+ * Renders entire scene based on two arrays.
  */
 public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionListener, MouseWheelListener, MouseListener {
     private GLU glu = new GLU();
@@ -31,13 +34,13 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
     private final static float sensitivity = 0.001f;
     private final static float moveIncrement = 1.8f;
     // Display lists
-    private int cubeDisplayList;
+    protected int cubeDisplayList;
     // Textures
     private int rockTexture = -1;
     private int waterTexture = -1;
     // External data
-    private int[] cubes;
-    private int[] water;
+    protected int[] cubes;
+    protected int[] water;
 
     public CubeRenderer(final int[] cubes, final int[] water) {
         this.cubes = cubes;
@@ -103,6 +106,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
     public void display(final GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        gl.glColorMaterial(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE);
 
         gl.glLoadIdentity();
 
@@ -110,14 +114,14 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
         gl.glRotatef(yRotation, 0f, 1f, 0f);
         gl.glRotatef(xRotation, 1f, 0f, 0f);
 
-        float[] lightPos = {-200, -300, -200, 1};        // light position
-        // float[] noAmbient = {0.2f, 0.2f, 0.2f, 1f};     // low ambient light
-        float[] diffuse = {1f, 1f, 1f, 1f};        // full diffuse colour
+        float[] lightPos = {-200, -300, -200, 1}; // light position
+        float[] diffuse = {1f, 1f, 1f, 1f}; // full diffuse colour
+        float[] specular = {0.5f, 0.5f, 0.5f, 1f}; // specular colour
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
-        // gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, noAmbient, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specular, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
 
         // Define relative position to make blended rendering a little bit more okay
@@ -159,7 +163,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
     /**
      * Renders solid rock cubes.
      */
-    private void renderSolidCubes(final GL2 gl) {
+    protected void renderSolidCubes(final GL2 gl) {
         gl.glColor4f(0.5f, 0.5f, 0.5f, 1f);
         for (int column = 0; column < cubes.length; column++) {
             for (int cubeIndex = 0; cubeIndex < cubes[column]; cubeIndex++) {
@@ -182,7 +186,7 @@ public class CubeRenderer implements GLEventListener, KeyListener, MouseMotionLi
      * @param tiltedAway
      * @param tiltedLeft -- is tilted to the side
      */
-    private void renderWater(final GL2 gl, boolean tiltedAway, boolean tiltedLeft) {
+    protected void renderWater(final GL2 gl, boolean tiltedAway, boolean tiltedLeft) {
         gl.glColor4f(0f, 0f, 0.7f, 0.5f);
         float xShift = 2f;
         float yShift = tiltedAway ? -2f : 2f;

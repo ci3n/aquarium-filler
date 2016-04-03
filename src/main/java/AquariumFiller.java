@@ -3,6 +3,10 @@ import java.util.*;
 /**
  * Created by ci3n on 03/30/16.
  */
+
+/**
+ * Fills an aquarium (represented by int array) with water.
+ */
 public class AquariumFiller {
     private int[] aquarium = null;
     private int[] water = null;
@@ -27,7 +31,7 @@ public class AquariumFiller {
      * @return amount of water that can be stored in the tank
      */
     public int getWaterAmount() {
-        if (!isInitialised()) throw new IllegalStateException("Aquarium not setted");
+        if (!isInitialised()) throw new IllegalStateException("Aquarium isn't set");
         if (waterAmount != -1) return waterAmount;
         waterAmount = 0;
         int[] water = getWater();
@@ -38,10 +42,10 @@ public class AquariumFiller {
     }
 
     /**
-     * @return int array that contains amount of water in each column
+     * @return int array that contains amount of water in each column for whole aquarium
      */
     public int[] getWater() {
-        if (!isInitialised()) throw new IllegalStateException("Aquarium not setted");
+        if (!isInitialised()) throw new IllegalStateException("Aquarium isn't set");
         if (water != null) return water;
 
         water = new int[aquarium.length];
@@ -59,11 +63,18 @@ public class AquariumFiller {
         return water;
     }
 
-    private int[] getWaterForSingleAquarium(final int[] singleAquarium, final int aquariumNumber) {
+    /**
+     * Calculates result for separate part (without zeroes) of aquarium.
+     *
+     * @param singleAquarium independent part of aquarium
+     * @param aquariumStart  index of first element of current part in whole aquarium
+     * @return int array that contains amount of water in each column for current part of whole aquarium
+     */
+    private int[] getWaterForSingleAquarium(final int[] singleAquarium, final int aquariumStart) {
         int[] water = new int[singleAquarium.length];
         List<Section> sections = calculateSections(singleAquarium);
         Section lastSection = sections.remove(sections.size() - 1);
-        sections.addAll(sections.size(), splitLastSection(lastSection, aquariumNumber));
+        sections.addAll(sections.size(), splitLastSection(lastSection, aquariumStart));
 //        System.err.println("Sections" + sections);
         for (int i = 0; i < sections.size(); i++) {
             Section currentSection = sections.get(i);
@@ -101,7 +112,7 @@ public class AquariumFiller {
      *
      * @param section
      * @param aquariumStart start position of current aquarium
-     * in main aquarium to which section belongs
+     *                      in main aquarium to which section belongs
      * @return list of new sections
      */
     private List<Section> splitLastSection(final Section section, final int aquariumStart) {
@@ -197,6 +208,9 @@ public class AquariumFiller {
         return localMax;
     }
 
+    /**
+     * Container to store section's start and end positions
+     */
     private class Section {
         int start;
         int end;
